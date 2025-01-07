@@ -12,6 +12,7 @@ private:
     Q_OBJECT
 
     Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged FINAL)
+protected:
     QString m_title;
 
 public:
@@ -22,6 +23,7 @@ public:
     Q_INVOKABLE virtual QString getType() = 0;
 
     virtual ~Note() = default;
+
 signals:
     void titleChanged();
 public slots:

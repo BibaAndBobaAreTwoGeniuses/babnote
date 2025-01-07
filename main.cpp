@@ -2,7 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QUrl>
-
+#include "markdownnote.h"
 
 int main(int argc, char *argv[])
 {
@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 
     //Note note;
     //engine.rootContext()->setContextProperty("obj", &note);
-    //qmlRegisterType<Note>("Klewy", 1, 0, "Note");
+    qmlRegisterType<MarkdownNote>("Klewy", 1, 0, "MdModel");
 
 
     engine.loadFromModule("noteapp", "Main");

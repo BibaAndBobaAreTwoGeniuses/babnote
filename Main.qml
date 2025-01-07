@@ -8,6 +8,17 @@ Window {
     color: "#111111"
     title: qsTr("Hello World")
 
+
+    FileView {
+        id: listview
+        width: parent.width * 0.15
+        anchors.top: parent.top
+        anchors.topMargin: 25
+        anchors.bottom: parent.bottom
+    }
+
+
+
     Rectangle { // Background for any note
 
         width: parent.width * 0.75
@@ -19,22 +30,14 @@ Window {
         radius: 5
     }
 
-    TextEdit { // MarkdownNote component
-        id: textedit
-        font.pointSize: 16
-        color: "white"
-        textFormat: TextEdit.MarkdownText
-        text: "**sdadsjad**"
-        focus: true
-        wrapMode: TextEdit.Wrap
-        width: parent.width - parent.width * 0.25 - 20
-
-
+    MarkdownNote {
+        id: mdnote
         anchors.left: listview.right
         anchors.leftMargin: parent.width * 0.05
         anchors.top: parent.top
         anchors.topMargin: 50
     }
+
 
 
     Column { // Debug buttons kinda
@@ -43,63 +46,21 @@ Window {
         spacing: 10
         Button {
             onClicked: {
-                if (textedit.textFormat == TextEdit.PlainText) {
-                    textedit.textFormat = TextEdit.MarkdownText
+                if (mdnote.textEdit.textFormat == TextEdit.PlainText) {
+                    mdnote.textEdit.textFormat = TextEdit.MarkdownText
                 } else {
-                    textedit.textFormat = TextEdit.PlainText
+                    mdnote.textEdit.textFormat = TextEdit.PlainText
                 }
             }
             text: "Edit\Read modes"
         }
         Button {
             text: "Save .md file"
-        }
-    }
-
-
-    ListView { // File view component
-        id: listview
-        width: parent.width * 0.15
-        anchors.top: parent.top
-        anchors.topMargin: 50
-        anchors.bottom: parent.bottom
-        spacing: 10
-
-        model: ListModel {
-            ListElement {
-                text: "note1"
-
-            }
-            ListElement {
-                text: "note2"
-
-            }
-            ListElement {
-                text: "fuck"
-
-            }
-
-        }
-        delegate: Item {
-            width: ListView.view.width
-            height: 40
-            Rectangle {
-                radius: 10
-                anchors.fill: parent
-
-                color: "#222222"
-                Text {
-                   anchors.verticalCenter: parent.verticalCenter
-                   anchors.left: parent.left
-                   anchors.leftMargin: 10
-                   text: model.text
-                   color: "white"
-                   font.pixelSize: 14
-                }
+            onClicked: { // Это имитация автосейва/ручного сейва, тут уже QML обращается к С++ модели и сохраняет заметку
+                mdnote.mdModel.setTitle(mdnote.title); // Правда сначала надо сохранить название обязательно
+                mdnote.mdModel.saveContents(mdnote.contents);
             }
         }
     }
-
-
 
 }

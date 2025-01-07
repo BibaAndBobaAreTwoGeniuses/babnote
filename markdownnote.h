@@ -8,7 +8,7 @@ class MarkdownNote : public Note
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString contents READ contents WRITE setContents NOTIFY contentsChanged FINAL)
+    Q_PROPERTY(QString contents READ contents WRITE saveContents NOTIFY contentsChanged FINAL)
     QString m_contents;
 public:
     explicit MarkdownNote(QObject *parent = nullptr);
@@ -20,7 +20,8 @@ public:
 
 public slots:
     QString contents();
-    void setContents(QString new_contents);
+    void saveContents(QString new_contents);
+    void debugContent();
 
 signals:
     void contentsChanged();
