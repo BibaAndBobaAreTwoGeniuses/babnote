@@ -3,6 +3,7 @@
 #include <QQmlContext>
 #include <QUrl>
 #include "markdownnote.h"
+#include "notemanager.h"
 
 int main(int argc, char *argv[])
 {
@@ -20,6 +21,8 @@ int main(int argc, char *argv[])
     //engine.rootContext()->setContextProperty("obj", &note);
     qmlRegisterType<MarkdownNote>("Klewy", 1, 0, "MdModel");
 
+    auto& manager = NoteManager::instance();
+    engine.rootContext()->setContextProperty("noteManager", &manager);
 
     engine.loadFromModule("noteapp", "Main");
 

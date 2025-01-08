@@ -8,59 +8,71 @@ Window {
     color: "#111111"
     title: qsTr("Hello World")
 
+    Item {
+        width: parent.width
+        height: parent.height
+        focus: true  // Ensure the Item can receive key events
 
-    FileView {
-        id: listview
-        width: parent.width * 0.15
-        anchors.top: parent.top
-        anchors.topMargin: 25
-        anchors.bottom: parent.bottom
-    }
+        Keys.onPressed: {
+            if (event.key === Qt.Key_S && event.modifiers & Qt.ControlModifier) {
+                saveCurrentNote();
+            } else if (event.key === Qt.Key_M && event.modifiers & Qt.ControlModifier) {
+                switchMode();
+            }
 
+        }
 
-
-    Rectangle { // Background for any note
-
-        width: parent.width * 0.75
-        height: parent.height * 0.95
-        anchors.left: listview.right
-        anchors.leftMargin: 20
-        anchors.verticalCenter: parent.verticalCenter
-        color: "#222222"
-        radius: 5
-    }
-
-    MarkdownNote {
-        id: mdnote
-        anchors.left: listview.right
-        anchors.leftMargin: parent.width * 0.05
-        anchors.top: parent.top
-        anchors.topMargin: 50
-    }
+        function saveCurrentNote() {
+            console.log("function called");
+            if (stack.currentItem) {
+                if (stack.currentItem.mdModel.getType() === "markdown") {
+                    stack.currentItem.mdModel.setTitle(stack.currentItem.title);
+                    stack.currentItem.mdModel.setContents(stack.currentItem.contents);
 
 
-
-    Column { // Debug buttons kinda
-        anchors.top: parent.top
-        anchors.right: parent.right
-        spacing: 10
-        Button {
-            onClicked: {
-                if (mdnote.textEdit.textFormat == TextEdit.PlainText) {
-                    mdnote.textEdit.textFormat = TextEdit.MarkdownText
+                } else if (stack.currentItem.type === "kanban") {
+                    // TODO: Save kanban note
+                }
+            } else {
+                console.error("No current item in the StackView");
+            }
+        }
+        function switchMode() {
+            if (stack.currentItem && stack.currentItem.mdModel.getType() === "markdown") {
+                if (stack.currentItem.textEdit.textFormat == TextEdit.PlainText) {
+                    stack.currentItem.textEdit.textFormat = TextEdit.MarkdownText;
                 } else {
-                    mdnote.textEdit.textFormat = TextEdit.PlainText
+                    stack.currentItem.textEdit.textFormat = TextEdit.PlainText;
                 }
             }
-            text: "Edit\Read modes"
         }
-        Button {
-            text: "Save .md file"
-            onClicked: { // Это имитация автосейва/ручного сейва, тут уже QML обращается к С++ модели и сохраняет заметку
-                mdnote.mdModel.setTitle(mdnote.title); // Правда сначала надо сохранить название обязательно
-                mdnote.mdModel.saveContents(mdnote.contents);
-            }
+
+        FileView {
+            id: listview
+            width: parent.width * 0.15
+            anchors.top: parent.top
+            anchors.topMargin: 25
+            anchors.bottom: parent.bottom
+        }
+
+        Rectangle { // Background for any note
+            width: parent.width * 0.75
+            height: parent.height * 0.95
+            anchors.left: listview.right
+            anchors.leftMargin: 20
+            anchors.verticalCenter: parent.verticalCenter
+            color: "#222222"
+            radius: 5
+        }
+
+        StackView {
+            id: stack
+            anchors.left: listview.right
+            anchors.leftMargin: parent.width * 0.05
+            anchors.top: parent.top
+            anchors.topMargin: 50
+            width: parent.width * 0.75
+            height: parent.height * 0.95
         }
     }
-
 }

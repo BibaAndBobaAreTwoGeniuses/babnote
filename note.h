@@ -18,8 +18,9 @@ protected:
 public:
     explicit Note(QObject *parent = nullptr);
 
-    virtual QString serialize() = 0;
-    virtual void deserialize(const QString &json_contents) = 0;
+    virtual void serialize() {}
+    virtual void deserialize() {}
+
     Q_INVOKABLE virtual QString getType() = 0;
 
     virtual ~Note() = default;
