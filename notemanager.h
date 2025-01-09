@@ -1,9 +1,11 @@
 #ifndef NOTEMANAGER_H
 #define NOTEMANAGER_H
-
+#include <QUuid>
 #include <QObject>
 #include <QList>
 #include <QDebug>
+#include <qmap.h>
+#include <QVariantMap>
 class ManagerItem : public QObject {
     Q_OBJECT
     QString m_title;
@@ -33,9 +35,6 @@ public slots:
         m_title = std::move(new_title);
         emit titleChanged();
     }
-
-
-
 signals:
     void titleChanged();
 };
@@ -53,18 +52,36 @@ public:
         return manager;
     }
 
-    Q_INVOKABLE QList<ManagerItem*> getList() {
-        return list;
+    Q_INVOKABLE QString getUuid() {
+        auto id = QUuid().createUuid().toString();
+        qDebug() << id;
+        return id;
+    }
+    
+    Q_INVOKABLE QString contentsOf(QString uuid) { // Этот метод будет фетчить контент из базы данных
+        qDebug() << "func called" << uuid;
+        return content[uuid];
     }
 
-    Q_INVOKABLE QString contentsOf(QString title, QString type) { // Этот метод будет фетчить контент из базы данных
-        qDebug() << "func called" << title << type;
-        return "## sieg heil";
+    Q_INVOKABLE bool titleExists(const QString &title) {
+        for (auto &item : noteMap) {
+            if (item.toList()[0] == title) {
+                qDebug() << "exsits";
+                return true;
+            }
+        }
+        return false;
     }
 
-    void saveNote(const QString &title, const QString& type, const QString &contents);
+    Q_INVOKABLE void createNote(const QString &uuid, const QString &title, const QString &type);
+    Q_INVOKABLE void saveNote(const QString &uuid, const QString&title, const QString &contents);
 
-    QList<ManagerItem*> list;
+    QMap<QString, QString> content;
+    QVariantMap noteMap;
+public slots:
+    QVariantMap getNotes() {
+        return noteMap;
+    }
 signals:
 };
 

@@ -5,6 +5,7 @@ Item {
     width: 200 // Default width for the FileView
     height: 400 // Default height for the FileView
 
+    property list<string> titles
 
     Component {
         id: markdownNoteComponent
@@ -18,7 +19,14 @@ Item {
         height: fileViewRoot.height
         spacing: 5
 
-        model: noteManager.getList() // Bind to the model
+        model: ListModel {
+            Component.onCompleted: {
+                var notesMap = noteManager.getNotes();
+                for (var obj in notesMap) {
+                    fileViewList.model.append({uuid: obj, title: notesMap[obj][0]})
+                }
+            }
+        }
 
         delegate: Item {
             width: fileViewList.width
@@ -29,7 +37,7 @@ Item {
                 anchors.fill: parent // Make the button fill the parent container
                 anchors.margins: 5 // Optional margin around the button
 
-                text: modelData.title // Display the title property of each item
+                text: title // Display the title property of each item
 
                 contentItem: Text {
                     text: control.text
@@ -37,7 +45,6 @@ Item {
                     color: "white"
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
-                    elide: Text.ElideRight
                 }
 
                 background: Rectangle {
@@ -46,13 +53,20 @@ Item {
                 }
 
                 onClicked: {
-                    console.log("Button clicked:", modelData.title);
                     stack.pop();
-                    var obj = markdownNoteComponent.createObject(stack, {title: modelData.title, contents: noteManager.contentsOf(modelData.title, modelData.type)})
-
+                    var obj = markdownNoteComponent.createObject(stack, {uuid: uuid, title: title, contents: noteManager.contentsOf(uuid)})
                     stack.push(obj);
                 }
             }
+        }
+    }
+
+    function reloadNotes() {
+        fileViewList.model.clear();
+
+        var notesMap = noteManager.getNotes();
+        for (var obj in notesMap) {
+            fileViewList.model.append({uuid: obj, title: notesMap[obj][0]})
         }
     }
 }

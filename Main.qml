@@ -12,33 +12,20 @@ Window {
         width: parent.width
         height: parent.height
         focus: true  // Ensure the Item can receive key events
-
+        
         Keys.onPressed: {
             if (event.key === Qt.Key_S && event.modifiers & Qt.ControlModifier) {
-                saveCurrentNote();
+                saveCurrentNode();
             } else if (event.key === Qt.Key_M && event.modifiers & Qt.ControlModifier) {
                 switchMode();
-            }
-
-        }
-
-        function saveCurrentNote() {
-            console.log("function called");
-            if (stack.currentItem) {
-                if (stack.currentItem.mdModel.getType() === "markdown") {
-                    stack.currentItem.mdModel.setTitle(stack.currentItem.title);
-                    stack.currentItem.mdModel.setContents(stack.currentItem.contents);
-
-
-                } else if (stack.currentItem.type === "kanban") {
-                    // TODO: Save kanban note
-                }
-            } else {
-                console.error("No current item in the StackView");
+            } else if (event.key === Qt.Key_N && event.modifiers & Qt.ControlModifier) // new note (markdown)
+            {
+                createNote();
             }
         }
+
         function switchMode() {
-            if (stack.currentItem && stack.currentItem.mdModel.getType() === "markdown") {
+            if (stack.currentItem && stack.currentItem.type === "markdown") {
                 if (stack.currentItem.textEdit.textFormat == TextEdit.PlainText) {
                     stack.currentItem.textEdit.textFormat = TextEdit.MarkdownText;
                 } else {
@@ -46,6 +33,39 @@ Window {
                 }
             }
         }
+
+        function createNote() {
+            var component = Qt.createComponent("MarkdownNote.qml");
+            var uuid = noteManager.getUuid();
+            let name = ""
+            let i = 1;
+            do {
+                name = "Untitled " + i.toString()
+                i++
+            } while (noteManager.titleExists(name))
+
+            var newNote = component.createObject(stack, {uuid: uuid, title: name, contents: "empty"});
+            stack.push(newNote);
+
+            noteManager.createNote(uuid, name, newNote.type);
+            listview.reloadNotes();
+        }
+
+
+        function saveCurrentNode() {
+            if (stack.currentItem) {
+                if (stack.currentItem.type === "markdown") {
+                    console.log("save");
+                    noteManager.saveNote(stack.currentItem.uuid, stack.currentItem.title, stack.currentItem.contents)
+                } else if (stack.currentItem.type === "kanban") {
+                    // TODO: Save kanban note
+                }
+            } else {
+                console.error("No current item in the StackView");
+            }
+            listview.reloadNotes();
+        }
+
 
         FileView {
             id: listview
@@ -73,6 +93,7 @@ Window {
             anchors.topMargin: 50
             width: parent.width * 0.75
             height: parent.height * 0.95
+
         }
     }
 }

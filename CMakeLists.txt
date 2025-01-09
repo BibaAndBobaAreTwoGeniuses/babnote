@@ -17,8 +17,8 @@ qt_add_qml_module(appnoteapp
     VERSION 1.0
     QML_FILES
         Main.qml
-        SOURCES note.h note.cpp
-        SOURCES markdownnote.h markdownnote.cpp
+        SOURCES
+        SOURCES
         QML_FILES
         QML_FILES MarkdownNote.qml
         QML_FILES FileView.qml

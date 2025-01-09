@@ -1,27 +1,21 @@
 import QtQuick
-import Klewy
+
 
 Item {
     id: mdnote
     property alias textEdit: textedit
-    property alias mdModel: mdmodel
 
+    property string uuid
     property string contents
     property string title
-
-
-    MdModel {
-        id: mdmodel
-        title: mdnote.title
-        contents: mdnote.contents
-    }
+    property string type: "markdown"
 
     TextEdit { // MarkdownNote title
         id: textedittitle
         font.pointSize: 20
         font.bold: true
         color: "white"
-        text: mdmodel.title
+        text: mdnote.title
         focus: true
         width: parent.width - parent.width * 0.25 - 20
 
@@ -35,7 +29,7 @@ Item {
         font.pointSize: 16
         color: "white"
         textFormat: TextEdit.MarkdownText
-        text: mdmodel.contents
+        text: mdnote.contents
         focus: true
         wrapMode: TextEdit.Wrap
         anchors.top: parent.top
