@@ -2,7 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QUrl>
-#include "notemanager.h"
+#include "dbnotecontroller.h"
 
 int main(int argc, char *argv[])
 {
@@ -16,8 +16,8 @@ int main(int argc, char *argv[])
         []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
 
-    auto& manager = NoteManager::instance();
-    engine.rootContext()->setContextProperty("noteManager", &manager);
+    DBNoteController controller;
+    engine.rootContext()->setContextProperty("controller", &controller);
 
     engine.loadFromModule("noteapp", "Main");
 

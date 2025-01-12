@@ -4,7 +4,7 @@ project(noteapp VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick)
+find_package(Qt6 REQUIRED COMPONENTS Quick Sql)
 
 qt_standard_project_setup(REQUIRES 6.5)
 
@@ -20,9 +20,13 @@ qt_add_qml_module(appnoteapp
         SOURCES
         SOURCES
         QML_FILES
-        QML_FILES MarkdownNote.qml
+        QML_FILES TextNote.qml
         QML_FILES FileView.qml
-        SOURCES notemanager.h notemanager.cpp
+        SOURCES
+        SOURCES notecontroller.h
+        SOURCES dbnotecontroller.h dbnotecontroller.cpp
+        QML_FILES FileViewMenu.qml
+        QML_FILES FileViewBar.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -37,7 +41,7 @@ set_target_properties(appnoteapp PROPERTIES
 )
 
 target_link_libraries(appnoteapp
-    PRIVATE Qt6::Quick
+    PRIVATE Qt6::Quick Qt6::Sql
 )
 
 include(GNUInstallDirs)

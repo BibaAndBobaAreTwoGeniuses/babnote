@@ -1,72 +1,108 @@
 import QtQuick 2.15
 import QtQuick.Controls
 Item {
-    id: fileViewRoot
+    id: root
     width: 200 // Default width for the FileView
-    height: 400 // Default height for the FileView
+    height: parent.height // Default height for the FileView
 
-    property list<string> titles
+    //property INoteController controller: DBNoteController {}
 
     Component {
         id: markdownNoteComponent
-        MarkdownNote {
+        TextNote {
         }
     }
 
+
+
     ListView { // File view component
         id: fileViewList
-        width: fileViewRoot.width
-        height: fileViewRoot.height
+        width: root.width
+        height: root.height
         spacing: 5
 
         model: ListModel {
+            id: modelComponent
             Component.onCompleted: {
-                var notesMap = noteManager.getNotes();
-                for (var obj in notesMap) {
-                    fileViewList.model.append({uuid: obj, title: notesMap[obj][0]})
-                }
+                console.log("reloading notes");
+                root.reloadNotes();
+                // noteId
+                // title
             }
         }
 
         delegate: Item {
-            width: fileViewList.width
-            height: 50 // Adjust height for buttons
+            id: noteItem
+            width: root.width
 
-            Button {
-                id: control
-                anchors.fill: parent // Make the button fill the parent container
-                anchors.margins: 5 // Optional margin around the button
+            required property string title
+            required property int noteId
 
-                text: title // Display the title property of each item
+            height: 50
 
-                contentItem: Text {
-                    text: control.text
-                    font: control.font
+            Rectangle {
+                id: noteRect
+                anchors.fill: parent
+                anchors.margins: 5
+
+                Text {
+                    anchors.fill: parent
+                    text: noteItem.title
                     color: "white"
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
 
-                background: Rectangle {
-                    color: "#222222"
-                    radius: 5
+                color: "#222222"
+                radius: 5
+
+                MouseArea {
+                    id: mouseArea
+                    anchors.fill: parent
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+                    onClicked: (mouse) => {
+                        if (mouse.button == Qt.LeftButton) {
+                            stack.pop()
+                            var obj = markdownNoteComponent.createObject(stack, {noteId: noteItem.noteId, title: noteItem.title, contents: controller.getNoteText(noteId), type: "markdown"})
+                            stack.push(obj)
+                        } else {
+                            contextMenu.open()
+                        }
+                    }
+
+                    FileViewMenu {
+                        id: contextMenu
+                        noteId: noteItem.noteId
+                    }
                 }
 
-                onClicked: {
-                    stack.pop();
-                    var obj = markdownNoteComponent.createObject(stack, {uuid: uuid, title: title, contents: noteManager.contentsOf(uuid)})
-                    stack.push(obj);
-                }
+
             }
         }
+
     }
 
-    function reloadNotes() {
-        fileViewList.model.clear();
 
-        var notesMap = noteManager.getNotes();
-        for (var obj in notesMap) {
-            fileViewList.model.append({uuid: obj, title: notesMap[obj][0]})
+    Connections {
+        target: controller
+        function onUpdated() {
+            root.reloadNotes()
         }
     }
+    function reloadNotes() {
+        fileViewList.model.clear()
+        console.log("reloading")
+        let notesVec = controller.getNotes()
+        for (const noteId of notesVec) {
+            let title = controller.getNoteName(noteId)
+            fileViewList.model.append({noteId: noteId, title: title})
+        }
+    }
+
+
+
+
+
+
+
 }

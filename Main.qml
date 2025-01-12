@@ -1,99 +1,109 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
+import noteapp
 
 Window {
+    id: root
     width: 640
     height: 480
     visible: true
     color: "#111111"
     title: qsTr("Hello World")
 
+    //property INoteController controller: DBNoteController {}
+
+    SplitView {
+        anchors.fill: parent
+        spacing: 100
+        handle: Rectangle {
+            implicitWidth: 3
+            color: SplitHandle.pressed ? "black" : "black"
+
+            border.color: SplitHandle.hovered ? "black" : "black"
+            opacity: SplitHandle.pressed ? "1.0" : "0.0"
+
+            Behavior on opacity {
+                OpacityAnimator {
+                    duration: 500
+                }
+            }
+        }
+
+
+        ColumnLayout {
+            id: fileViewLayout
+            spacing: 10
+            Layout.minimumWidth: 100
+            Layout.maximumWidth: 300
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            Layout.topMargin: 5
+
+            FileViewBar {
+                Layout.minimumHeight: 20
+                Layout.fillWidth: true
+            }
+
+            FileView {
+                id: fileExplorer
+
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+            }
+        }
+
+
+        ColumnLayout {
+
+            id: noteEditorLayout
+
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.topMargin: 20
+            Layout.rightMargin: 20
+            Layout.bottomMargin: 20
+
+            Item {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                Rectangle {
+                    id: backgroundRect
+                    anchors.fill: parent
+                    color: "#222222"
+                    radius: 5
+                }
+
+                StackView {
+                    id: stack
+                    anchors.fill: parent
+                    anchors.topMargin: 20
+                    anchors.leftMargin: 20
+
+                    pushEnter: null
+                    pushExit: null
+                    popEnter: null
+                    popExit: null
+                }
+            }
+        }
+
+    }
+
     Item {
         width: parent.width
         height: parent.height
-        focus: true  // Ensure the Item can receive key events
+        focus: true
         
         Keys.onPressed: {
-            if (event.key === Qt.Key_S && event.modifiers & Qt.ControlModifier) {
-                saveCurrentNode();
-            } else if (event.key === Qt.Key_M && event.modifiers & Qt.ControlModifier) {
-                switchMode();
-            } else if (event.key === Qt.Key_N && event.modifiers & Qt.ControlModifier) // new note (markdown)
-            {
+            if (event.key === Qt.Key_N && event.modifiers & Qt.ControlModifier) {
                 createNote();
             }
         }
-
-        function switchMode() {
-            if (stack.currentItem && stack.currentItem.type === "markdown") {
-                if (stack.currentItem.textEdit.textFormat == TextEdit.PlainText) {
-                    stack.currentItem.textEdit.textFormat = TextEdit.MarkdownText;
-                } else {
-                    stack.currentItem.textEdit.textFormat = TextEdit.PlainText;
-                }
-            }
-        }
-
         function createNote() {
-            var component = Qt.createComponent("MarkdownNote.qml");
-            var uuid = noteManager.getUuid();
-            let name = ""
-            let i = 1;
-            do {
-                name = "Untitled " + i.toString()
-                i++
-            } while (noteManager.titleExists(name))
-
-            var newNote = component.createObject(stack, {uuid: uuid, title: name, contents: "empty"});
-            stack.push(newNote);
-
-            noteManager.createNote(uuid, name, newNote.type);
-            listview.reloadNotes();
-        }
-
-
-        function saveCurrentNode() {
-            if (stack.currentItem) {
-                if (stack.currentItem.type === "markdown") {
-                    console.log("save");
-                    noteManager.saveNote(stack.currentItem.uuid, stack.currentItem.title, stack.currentItem.contents)
-                } else if (stack.currentItem.type === "kanban") {
-                    // TODO: Save kanban note
-                }
-            } else {
-                console.error("No current item in the StackView");
-            }
-            listview.reloadNotes();
-        }
-
-
-        FileView {
-            id: listview
-            width: parent.width * 0.15
-            anchors.top: parent.top
-            anchors.topMargin: 25
-            anchors.bottom: parent.bottom
-        }
-
-        Rectangle { // Background for any note
-            width: parent.width * 0.75
-            height: parent.height * 0.95
-            anchors.left: listview.right
-            anchors.leftMargin: 20
-            anchors.verticalCenter: parent.verticalCenter
-            color: "#222222"
-            radius: 5
-        }
-
-        StackView {
-            id: stack
-            anchors.left: listview.right
-            anchors.leftMargin: parent.width * 0.05
-            anchors.top: parent.top
-            anchors.topMargin: 50
-            width: parent.width * 0.75
-            height: parent.height * 0.95
-
+            let noteId = controller.createNote()
+            console.log("created " + noteId.toString())
         }
     }
 }
