@@ -12,23 +12,22 @@ Item {
 
         Button {
             id: createNoteBtn
-            text: "Add"
-            onClicked: {
-                const noteId = root.noteController.createNote()
-                root.noteController.setNoteName(noteId, makeid(16))
-            }
+            text: qsTr("Add")
+            onClicked: root.noteController.setNoteName(
+                           root.noteController.createNote(), makeid(16))
         }
     }
 
     function makeid(length) {
-        let result = '';
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        const charactersLength = characters.length;
-        let counter = 0;
+        let result = ''
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+        const charactersLength = characters.length
+        let counter = 0
         while (counter < length) {
-          result += characters.charAt(Math.floor(Math.random() * charactersLength));
-          counter += 1;
+            result += characters.charAt(Math.floor(Math.random(
+                                                       ) * charactersLength))
+            counter += 1
         }
-        return result;
+        return result
     }
 }

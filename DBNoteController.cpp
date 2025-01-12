@@ -9,15 +9,16 @@ DBNoteController::DBNoteController()
     : _db()
 {
     _db = QSqlDatabase::addDatabase("QSQLITE");
-    _db.setHostName("bigblue");
-    _db.setDatabaseName("flightdb.sqlite");
-    _db.setUserName("acarlson");
-    _db.setPassword("1uTbSbAs");
+    _db.setHostName("babatg");
+    _db.setDatabaseName("babnote.sqlite");
+    _db.setUserName("babatg");
+    _db.setPassword("babatg");
     _db.open();
     auto queryStr = "CREATE TABLE IF NOT EXISTS notes("
                     "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                     "name TINYTEXT,"
                     "text LONGTEXT,"
+                    "textFormat INTEGER,"
                     "tags LONGTEXT,"
                     "created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
                     "updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
@@ -45,10 +46,9 @@ QVector<NoteId> DBNoteController::getNotes() const
     QSqlQuery q(_db);
     prepareQuery(q, queryStr);
     execQuery(q);
-    int idPos = q.record().indexOf("id");
     QVector<NoteId> notes;
     while (q.next()) {
-        notes.emplace_back(q.value(idPos).toLongLong());
+        notes.emplace_back(q.value(0).toLongLong());
     }
     return notes;
 }
@@ -64,9 +64,10 @@ NoteId DBNoteController::createNote()
 
 void DBNoteController::removeNote(NoteId id)
 {
-    auto queryStr = QString("DELETE FROM notes WHERE id=%1;").arg(id);
+    auto queryStr = "DELETE FROM notes WHERE id=:identifier;";
     QSqlQuery q(_db);
     prepareQuery(q, queryStr);
+    q.bindValue(":identifier", id);
     execQuery(q);
 }
 
@@ -90,14 +91,24 @@ void DBNoteController::setNoteText(NoteId id, const QString& text)
     queryField(id, "text", text);
 }
 
-QStringList DBNoteController::getNoteTags(NoteId id) const
+Qt::TextFormat DBNoteController::getNoteTextFormat(NoteId id) const
 {
-    return queryField(id, "tags").toString().split(';');
+    return static_cast<Qt::TextFormat>(queryField(id, "textFormat").toInt());
 }
 
-void DBNoteController::setNoteTags(NoteId id, const QStringList& tags)
+void DBNoteController::setNoteTextFormat(NoteId id, Qt::TextFormat format)
 {
-    queryField(id, "tags", tags.join(';'));
+    queryField(id, "textFormat", static_cast<int>(format));
+}
+
+QString DBNoteController::getNoteTags(NoteId id) const
+{
+    return queryField(id, "tags").toString();
+}
+
+void DBNoteController::setNoteTags(NoteId id, const QString& tags)
+{
+    queryField(id, "tags", tags);
 }
 
 int64_t DBNoteController::getNoteCreationTimestamp(NoteId id) const
@@ -112,6 +123,7 @@ int64_t DBNoteController::getNoteUpdateTimestamp(NoteId id) const
 
 void DBNoteController::prepareQuery(QSqlQuery& query, const QString& s)
 {
+    //qDebug() << "Preparing query(" << s << ")";
     if (!query.prepare(s)) {
         auto msg = query.lastError().text().toStdString();
         throw std::runtime_error(msg);
@@ -120,6 +132,7 @@ void DBNoteController::prepareQuery(QSqlQuery& query, const QString& s)
 
 void DBNoteController::execQuery(QSqlQuery& query)
 {
+    //qDebug() << "Executing query";
     if (!query.exec()) {
         auto msg = "Unable to execute query: " + query.lastError().text();
         throw std::runtime_error(msg.toStdString());
@@ -128,21 +141,20 @@ void DBNoteController::execQuery(QSqlQuery& query)
 
 QVariant DBNoteController::queryField(NoteId id, const QString& name) const
 {
-    auto queryStr = QString("SELECT %1 FROM notes WHERE id=%2;").arg(name).arg(id);
+    QString queryStr = QString("SELECT %1 FROM notes WHERE id=%2;").arg(name).arg(id);
     QSqlQuery q(_db);
     prepareQuery(q, queryStr);
     execQuery(q);
-    q.last();
-    int loc = q.record().indexOf(name);
+    q.next();
     return q.value(0);
 }
 
 void DBNoteController::queryField(NoteId id, const QString& name, const QVariant& value)
 {
-    auto queryStr = QString("UPDATE notes SET %1=\"%2\", updated=CURRENT_TIMESTAMP WHERE id=%3;")
-                        .arg(name).arg(value.toString()).arg(id);
+    QString queryStr = QString("UPDATE notes SET `%1`=:value, updated=CURRENT_TIMESTAMP WHERE `id`=%2;").arg(name).arg(id);
     QSqlQuery q(_db);
     prepareQuery(q, queryStr);
+    q.bindValue(":value", value);
     execQuery(q);
 }
 
