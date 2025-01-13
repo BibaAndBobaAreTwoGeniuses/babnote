@@ -51,16 +51,16 @@ Item {
         }
     }
 
-    Keys.onPressed: (event) => {
-        console.log("pressed smth")
-        if (event.key === Qt.Key_S && event.modifiers & Qt.ControlModifier) {
-
-            console.log("Ctrl + S pressed. Focus:", activeFocus);
+    Shortcut {
+        sequence: "Ctrl+S"
+        onActivated: {
             note.saveNote()
-
-        } else if (event.key === Qt.Key_M && event.modifiers & Qt.ControlModifier) {
-            console.log("Ctrl + M pressed. Focus:", activeFocus);
-            note.switchMode();
+        }
+    }
+    Shortcut {
+        sequence: "Ctrl+M"
+        onActivated: {
+            note.switchMode()
         }
     }
 }
