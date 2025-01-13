@@ -1,31 +1,28 @@
 import QtQuick
+import QtQuick.Controls
 
-
-Item {
+Note {
     id: root
 
-
-    required property int noteId
-    property string contents
-    required property string title
-    required property string type
 
     TextInput { // MarkdownNote title
         id: noteTitle
         font.pointSize: 20
         font.bold: true
         color: "white"
-        text: root.title
+        text: root.name
         focus: true
         width: parent.width - parent.width * 0.25 - 20
 
         onTextChanged: {
-            title = text
+            root.name = noteTitle.text
         }
+
         onActiveFocusChanged: {
 
         }
     }
+
 
     TextEdit {
         id: noteEditor
@@ -40,7 +37,7 @@ Item {
         width: parent.width - parent.width * 0.25 - 20
 
         onTextChanged: {
-            contents = text
+            root.contents = text
         }
     }
 
@@ -57,20 +54,9 @@ Item {
 
     Keys.onPressed: {
         if (event.key === Qt.Key_S && event.modifiers & Qt.ControlModifier) {
-            saveNote();
+            root.saveNote();
         } else if (event.key === Qt.Key_M && event.modifiers & Qt.ControlModifier) {
             switchMode();
         }
-    }
-
-
-
-    function saveNote() {
-        let noteId = root.noteId
-        let noteContents = root.contents
-        let noteName = root.title
-
-        controller.setNoteText(noteId, noteContents)
-        controller.setNoteName(noteId, noteName)
     }
 }
