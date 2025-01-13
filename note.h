@@ -39,39 +39,18 @@ class Note : public QObject
 public:
     explicit Note(QObject *parent = nullptr);
 
-    Q_INVOKABLE void saveName() {
-        m_controller->setNoteName(m_noteId, m_name);
-    }
-    Q_INVOKABLE void saveContents() {
-        m_controller->setNoteText(m_noteId, m_contents);
-    }
-    Q_INVOKABLE void saveTextFormat() {
-        m_controller->setNoteTextFormat(m_noteId, m_textFormat);
-    }
-    Q_INVOKABLE void setTags() {
-        m_controller->setNoteTags(m_noteId, m_tags);
-    }
-    Q_INVOKABLE void saveNote() {
-        m_controller->setNoteName(m_noteId, m_name);
-        m_controller->setNoteText(m_noteId, m_contents);
-        m_controller->setNoteTags(m_noteId, m_tags);
-    }
-    Q_INVOKABLE void switchMode() {
-        if (m_type == "markdown") {
-            if (m_textFormat == Qt::MarkdownText) {
-                m_textFormat = Qt::PlainText;
-            } else {
-                m_textFormat = Qt::MarkdownText;
-            }
-        }
-        emit textFormatChanged();
-    }
+    Q_INVOKABLE void saveName();
+    Q_INVOKABLE void saveContents();
+    Q_INVOKABLE void saveTextFormat();
+    Q_INVOKABLE void setTags();
+    Q_INVOKABLE void saveNote();
+    Q_INVOKABLE void switchMode();
     
 public slots:
-    int64_t getNoteCreationTimestamp() {
+    int64_t getNoteCreationTimestamp() const {
         return m_controller->getNoteCreationTimestamp(m_noteId);
     }
-    int64_t getNoteUpdateTimestamp() {
+    int64_t getNoteUpdateTimestamp() const {
         return m_controller->getNoteUpdateTimestamp(m_noteId);
     }
 signals:
