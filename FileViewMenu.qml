@@ -4,7 +4,7 @@ import QtQuick.Controls
 Item {
     id: root
     required property int noteId
-
+    required property INoteController controller
     function open() {
         contextMenu.open()
     }
@@ -28,7 +28,7 @@ Item {
             }
             text: "Delete"
             onClicked: {
-                controller.removeNote(root.noteId)
+                root.controller.removeNote(root.noteId)
                 stack.pop()
             }
         }

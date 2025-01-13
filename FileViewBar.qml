@@ -4,6 +4,8 @@ import QtQuick.Layouts
 
 Item {
     id: root
+    required property INoteController controller
+
     RowLayout {
         Layout.minimumWidth: 50
         Layout.fillWidth: true
@@ -21,7 +23,7 @@ Item {
 
             text: "Create"
             onClicked: {
-                controller.createNote()
+                root.controller.createNote()
             }
         }
         Button {
@@ -37,7 +39,7 @@ Item {
 
             text: "Anal"
             onClicked: {
-                console.log("Anal")
+                console.log("Anal v2")
             }
         }
     }

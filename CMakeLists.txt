@@ -27,6 +27,8 @@ qt_add_qml_module(appnoteapp
         SOURCES dbnotecontroller.h dbnotecontroller.cpp
         QML_FILES FileViewMenu.qml
         QML_FILES FileViewBar.qml
+        QML_FILES
+        SOURCES note.h note.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

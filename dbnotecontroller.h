@@ -20,8 +20,10 @@ public:
     void setNoteName(NoteId id, const QString& name) override;
     QString getNoteText(NoteId id) const override;
     void setNoteText(NoteId id, const QString& text) override;
-    QStringList getNoteTags(NoteId id) const override;
-    void setNoteTags(NoteId id, const QStringList& tags) override;
+    Qt::TextFormat getNoteTextFormat(NoteId id) const override;
+    void setNoteTextFormat(NoteId id, Qt::TextFormat format) override;
+    QString getNoteTags(NoteId id) const override;
+    void setNoteTags(NoteId id, const QString& tags) override;
     int64_t getNoteCreationTimestamp(NoteId id) const override;
     int64_t getNoteUpdateTimestamp(NoteId id) const override;
 

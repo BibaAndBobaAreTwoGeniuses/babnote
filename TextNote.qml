@@ -1,25 +1,35 @@
 import QtQuick
 import QtQuick.Controls
 
-Note {
+Item {
     id: root
 
+    required property INoteController controller
+    required property int noteId
+    required property string name
+    required property string type
+    property string contents
+
+    Note {
+        id: note
+        controller: root.controller
+        noteId: root.noteId
+        name: root.name
+        type: root.type
+        contents: root.contents
+    }
 
     TextInput { // MarkdownNote title
         id: noteTitle
         font.pointSize: 20
         font.bold: true
         color: "white"
-        text: root.name
+        text: note.name
         focus: true
         width: parent.width - parent.width * 0.25 - 20
 
         onTextChanged: {
-            root.name = noteTitle.text
-        }
-
-        onActiveFocusChanged: {
-
+            note.name = text
         }
     }
 
@@ -28,8 +38,8 @@ Note {
         id: noteEditor
         font.pointSize: 14
         color: "white"
-        textFormat: TextEdit.MarkdownText
-        text: root.contents
+        textFormat: note.textFormat
+        text: note.contents
         focus: true
         wrapMode: TextEdit.Wrap
         anchors.top: parent.top
@@ -37,26 +47,20 @@ Note {
         width: parent.width - parent.width * 0.25 - 20
 
         onTextChanged: {
-            root.contents = text
+            note.contents = text
         }
     }
 
-    function switchMode() {
-        if (type === "markdown") {
-            if (noteEditor.textFormat === TextEdit.MarkdownText) {
-                noteEditor.textFormat = TextEdit.PlainText
-            } else {
-                noteEditor.textFormat = TextEdit.MarkdownText
-            }
-        }
-    }
-
-
-    Keys.onPressed: {
+    Keys.onPressed: (event) => {
+        console.log("pressed smth")
         if (event.key === Qt.Key_S && event.modifiers & Qt.ControlModifier) {
-            root.saveNote();
+
+            console.log("Ctrl + S pressed. Focus:", activeFocus);
+            note.saveNote()
+
         } else if (event.key === Qt.Key_M && event.modifiers & Qt.ControlModifier) {
-            switchMode();
+            console.log("Ctrl + M pressed. Focus:", activeFocus);
+            note.switchMode();
         }
     }
 }

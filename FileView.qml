@@ -5,18 +5,14 @@ Item {
     width: 200 // Default width for the FileView
     height: parent.height // Default height for the FileView
 
-    //property INoteController controller: DBNoteController {}
+    required property INoteController controller
 
-    Component {
-        id: markdownNoteComponent
-        TextNote {
-        }
-    }
+
 
 
 
     ListView { // File view component
-        id: fileViewList
+        id: fileList
         width: root.width
         height: root.height
         spacing: 5
@@ -63,7 +59,8 @@ Item {
                     onClicked: (mouse) => {
                         if (mouse.button == Qt.LeftButton) {
                             stack.pop()
-                            var obj = markdownNoteComponent.createObject(stack, {noteId: noteItem.noteId, title: noteItem.title, contents: controller.getNoteText(noteId), type: "markdown"})
+                            let comp = Qt.createComponent("TextNote.qml")
+                            let obj = comp.createObject(stack, {controller: root.controller, noteId: noteItem.noteId, name: noteItem.title, contents: controller.getNoteText(noteId), type: "markdown"})
                             stack.push(obj)
                         } else {
                             contextMenu.open()
@@ -72,6 +69,7 @@ Item {
 
                     FileViewMenu {
                         id: contextMenu
+                        controller: root.controller
                         noteId: noteItem.noteId
                     }
                 }
@@ -90,13 +88,14 @@ Item {
         }
     }
     function reloadNotes() {
-        fileViewList.model.clear()
+        fileList.model.clear()
         console.log("reloading")
         let notesVec = controller.getNotes()
         for (const noteId of notesVec) {
             let title = controller.getNoteName(noteId)
-            fileViewList.model.append({noteId: noteId, title: title})
+            fileList.model.append({noteId: noteId, title: title})
         }
+        console.log("finished")
     }
 
 

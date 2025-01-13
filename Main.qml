@@ -11,7 +11,17 @@ Window {
     color: "#111111"
     title: qsTr("Hello World")
 
-    //property INoteController controller: DBNoteController {}
+    property INoteController controller: DBNoteController {}
+
+    // Note {
+    //     id: testNode
+    //     noteId: 10
+    //     name: "Unttiled"
+    //     type: "markdown"
+    //     controller: root.controller
+    // }
+
+
 
     SplitView {
         anchors.fill: parent
@@ -41,13 +51,14 @@ Window {
             Layout.topMargin: 5
 
             FileViewBar {
+                controller: root.controller
                 Layout.minimumHeight: 20
                 Layout.fillWidth: true
             }
 
             FileView {
                 id: fileExplorer
-
+                controller: root.controller
                 Layout.fillWidth: true
                 Layout.fillHeight: true
             }
@@ -88,8 +99,8 @@ Window {
                 }
             }
         }
-
     }
+
 
     Item {
         width: parent.width
@@ -102,7 +113,7 @@ Window {
             }
         }
         function createNote() {
-            let noteId = controller.createNote()
+            let noteId = root.controller.createNote()
             console.log("created " + noteId.toString())
         }
     }

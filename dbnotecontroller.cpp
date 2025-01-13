@@ -9,15 +9,16 @@ DBNoteController::DBNoteController()
     : _db()
 {
     _db = QSqlDatabase::addDatabase("QSQLITE");
-    _db.setHostName("bigblue");
-    _db.setDatabaseName("flightdb.sqlite");
-    _db.setUserName("acarlson");
-    _db.setPassword("1uTbSbAs");
+    _db.setHostName("babatg");
+    _db.setDatabaseName("babnote.sqlite");
+    _db.setUserName("babatg");
+    _db.setPassword("babatg");
     _db.open();
     auto queryStr = "CREATE TABLE IF NOT EXISTS notes("
                     "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                     "name TINYTEXT,"
                     "text LONGTEXT,"
+                    "textFormat INTEGER,"
                     "tags LONGTEXT,"
                     "created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
                     "updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
@@ -45,12 +46,11 @@ QVector<NoteId> DBNoteController::getNotes() const
     QSqlQuery q(_db);
     prepareQuery(q, queryStr);
     execQuery(q);
-    int idPos = q.record().indexOf("id");
     QVector<NoteId> notes;
     while (q.next()) {
-        notes.emplace_back(q.value(idPos).toLongLong());
+        notes.emplace_back(q.value(0).toLongLong());
     }
-    qDebug() << notes.size();
+
     return notes;
 }
 
@@ -101,14 +101,24 @@ void DBNoteController::setNoteText(NoteId id, const QString& text)
     queryField(id, "text", text);
 }
 
-QStringList DBNoteController::getNoteTags(NoteId id) const
+Qt::TextFormat DBNoteController::getNoteTextFormat(NoteId id) const
 {
-    return queryField(id, "tags").toString().split(';');
+    return static_cast<Qt::TextFormat>(queryField(id, "textFormat").toInt());
 }
 
-void DBNoteController::setNoteTags(NoteId id, const QStringList& tags)
+void DBNoteController::setNoteTextFormat(NoteId id, Qt::TextFormat format)
 {
-    queryField(id, "tags", tags.join(';'));
+    queryField(id, "textFormat", static_cast<int>(format));
+}
+
+QString DBNoteController::getNoteTags(NoteId id) const
+{
+    return queryField(id, "tags").toString();
+}
+
+void DBNoteController::setNoteTags(NoteId id, const QString &tags)
+{
+    queryField(id, "tags", tags);
 }
 
 int64_t DBNoteController::getNoteCreationTimestamp(NoteId id) const
@@ -121,6 +131,17 @@ int64_t DBNoteController::getNoteUpdateTimestamp(NoteId id) const
     return queryField(id, "updated").toDateTime().toMSecsSinceEpoch();
 }
 
+
+
+void DBNoteController::prepareQuery(QSqlQuery& query, const QString& s)
+{
+    if (!query.prepare(s)) {
+        auto msg = query.lastError().text().toStdString();
+        throw std::runtime_error(msg);
+    }
+}
+
+
 bool DBNoteController::nameExists(const QString& title) const
 {
     auto queryStr = QString("SELECT name FROM notes WHERE name='%1';").arg(title);
@@ -131,13 +152,6 @@ bool DBNoteController::nameExists(const QString& title) const
     return q.last();
 }
 
-void DBNoteController::prepareQuery(QSqlQuery& query, const QString& s)
-{
-    if (!query.prepare(s)) {
-        auto msg = query.lastError().text().toStdString();
-        throw std::runtime_error(msg);
-    }
-}
 
 void DBNoteController::execQuery(QSqlQuery& query)
 {
@@ -153,8 +167,7 @@ QVariant DBNoteController::queryField(NoteId id, const QString& name) const
     QSqlQuery q(_db);
     prepareQuery(q, queryStr);
     execQuery(q);
-    q.last();
-    int loc = q.record().indexOf(name);
+    q.next();
     return q.value(0);
 }
 

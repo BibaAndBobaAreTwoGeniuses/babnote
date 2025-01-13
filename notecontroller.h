@@ -24,8 +24,10 @@ public:
     Q_INVOKABLE virtual void setNoteName(NoteId id, const QString& name) = 0;
     Q_INVOKABLE virtual QString getNoteText(NoteId id) const = 0;
     Q_INVOKABLE virtual void setNoteText(NoteId id, const QString& text) = 0;
-    Q_INVOKABLE virtual QStringList getNoteTags(NoteId id) const = 0;
-    Q_INVOKABLE virtual void setNoteTags(NoteId id, const QStringList& tags) = 0;
+    Q_INVOKABLE virtual Qt::TextFormat getNoteTextFormat(NoteId id) const = 0;
+    Q_INVOKABLE virtual void setNoteTextFormat(NoteId id, Qt::TextFormat format) = 0;
+    Q_INVOKABLE virtual QString getNoteTags(NoteId id) const = 0;
+    Q_INVOKABLE virtual void setNoteTags(NoteId id, const QString& tags) = 0;
     Q_INVOKABLE virtual int64_t getNoteCreationTimestamp(NoteId id) const = 0;
     Q_INVOKABLE virtual int64_t getNoteUpdateTimestamp(NoteId id) const = 0;
 
