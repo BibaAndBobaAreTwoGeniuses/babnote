@@ -5,7 +5,10 @@
 #include <QQmlEngine>
 #include <cstdint>
 #include <qtmetamacros.h>
-#include "INoteController.h"
+#
+using NoteId = int;
+
+class INoteController;
 
 class Note : public QObject
 {
@@ -15,7 +18,7 @@ class Note : public QObject
     Q_PROPERTY(NoteId noteId MEMBER m_noteId REQUIRED) // Неизменяемая типа, айди постоянный, хз можно ли сделать ее REQUIRED с READ только
 
     Q_PROPERTY(QString name MEMBER m_name NOTIFY nameChanged REQUIRED)
-    Q_PROPERTY(QString type MEMBER m_type REQUIRED) // Неизменяемый тип, типа markdown, richtext, plaintext
+
     Q_PROPERTY(QString contents MEMBER m_contents NOTIFY contentsChanged FINAL)
     Q_PROPERTY(QString tags MEMBER m_tags NOTIFY tagsChanged FINAL)
     Q_PROPERTY(Qt::TextFormat textFormat MEMBER m_textFormat NOTIFY textFormatChanged FINAL)
@@ -28,7 +31,7 @@ class Note : public QObject
     INoteController* m_controller;
     NoteId m_noteId;
     QString m_name;
-    QString m_type;
+
     QString m_tags;
     QString m_contents;
     Qt::TextFormat m_textFormat;
@@ -47,12 +50,8 @@ public:
     Q_INVOKABLE void switchMode();
     
 public slots:
-    int64_t getNoteCreationTimestamp() const {
-        return m_controller->getNoteCreationTimestamp(m_noteId);
-    }
-    int64_t getNoteUpdateTimestamp() const {
-        return m_controller->getNoteUpdateTimestamp(m_noteId);
-    }
+    int64_t getNoteCreationTimestamp() const;
+    int64_t getNoteUpdateTimestamp() const;
 signals:
     void nameChanged(const QString& newTitle);
     void contentsChanged(const QString& newContents);

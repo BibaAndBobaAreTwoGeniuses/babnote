@@ -1,4 +1,5 @@
 #include "Note.h"
+#include "INoteController.h"
 
 Note::Note(QObject *parent)
     : QObject{parent}
@@ -26,12 +27,18 @@ void Note::saveNote() {
 }
 
 void Note::switchMode() {
-    if (m_type == "markdown") {
-        if (m_textFormat == Qt::MarkdownText) {
-            m_textFormat = Qt::PlainText;
-        } else {
-            m_textFormat = Qt::MarkdownText;
-        }
+    if (m_textFormat == Qt::MarkdownText) {
+        m_textFormat = Qt::PlainText;
+    } else {
+        m_textFormat = Qt::MarkdownText;
     }
     emit textFormatChanged();
+}
+
+int64_t Note::getNoteCreationTimestamp() const {
+    return m_controller->getNoteCreationTimestamp(m_noteId);
+}
+
+int64_t Note::getNoteUpdateTimestamp() const {
+    return m_controller->getNoteUpdateTimestamp(m_noteId);
 }
