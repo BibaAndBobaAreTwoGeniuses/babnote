@@ -2,7 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QUrl>
-#include "dbnotecontroller.h"
+#include "DBNoteController.h"
 
 int main(int argc, char *argv[])
 {

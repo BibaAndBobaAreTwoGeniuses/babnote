@@ -5,7 +5,7 @@
 #include <QQmlEngine>
 #include <cstdint>
 #include <qtmetamacros.h>
-#include "notecontroller.h"
+#include "INoteController.h"
 
 class Note : public QObject
 {

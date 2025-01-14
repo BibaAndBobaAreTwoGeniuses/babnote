@@ -1,9 +1,12 @@
-#include "dbnotecontroller.h"
+#include "DBNoteController.h"
 #include <QSqlDriver>
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlError>
 #include <QDateTime>
+#include <qsqlquery.h>
+#include <qvariant.h>
+#include<QUuid>
 
 DBNoteController::DBNoteController()
     : _db()
@@ -14,7 +17,7 @@ DBNoteController::DBNoteController()
     _db.setUserName("babatg");
     _db.setPassword("babatg");
     _db.open();
-    auto queryStr = "CREATE TABLE IF NOT EXISTS notes("
+    auto queryStr = QString("CREATE TABLE IF NOT EXISTS notes("
                     "id INTEGER PRIMARY KEY AUTOINCREMENT,"
                     "name TINYTEXT,"
                     "text LONGTEXT,"
@@ -22,7 +25,7 @@ DBNoteController::DBNoteController()
                     "tags LONGTEXT,"
                     "created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
                     "updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
-                    ");";
+                    ");");
     QSqlQuery query(_db);
     prepareQuery(query, queryStr);
     execQuery(query);
@@ -32,6 +35,7 @@ DBNoteController::DBNoteController()
         auto msg = "Database does not support event notifications";
         throw std::runtime_error(msg);
     }
+    
     auto rb = _db.driver()->subscribeToNotification("notes");
     if (!rb) {
         auto msg = "Can not subscribe to db notification: " + _db.lastError().text().toStdString();
@@ -56,16 +60,15 @@ QVector<NoteId> DBNoteController::getNotes() const
 
 NoteId DBNoteController::createNote()
 {
-
     auto queryStr = QString("INSERT INTO notes(updated, text) VALUES(CURRENT_TIMESTAMP, \"some text\");");
     QSqlQuery q(_db);
     prepareQuery(q, queryStr);
     execQuery(q);
 
+// FIX: если название заметки заранее сделать Untitled + id будущей заметки то она не создастся
     auto lastInsertId = q.lastInsertId().toLongLong();
-    setNoteName(q.lastInsertId().toLongLong(), "Untitled " + QString::number(lastInsertId));
-
-    return q.lastInsertId().toLongLong();
+    setNoteName(lastInsertId, "Untitled " + QString::number(lastInsertId));
+    return lastInsertId;
 }
 
 void DBNoteController::removeNote(NoteId id)
@@ -84,10 +87,11 @@ QString DBNoteController::getNoteName(NoteId id) const
 void DBNoteController::setNoteName(NoteId id, const QString& name)
 {
     auto oldName = getNoteName(id);
-
-    if ((oldName != name && !nameExists(name)) || (oldName.isEmpty())) {
-        qDebug() << "setting name...";
+    qDebug() << "here";
+    if ((oldName != name || oldName.isEmpty()) && !nameExists(name))  {
         queryField(id, "name", name);
+    } else {
+        queryField(id, "name", QUuid::createUuid().toString(QUuid::WithoutBraces).chopped(10));
     }
 }
 
@@ -141,6 +145,13 @@ void DBNoteController::prepareQuery(QSqlQuery& query, const QString& s)
     }
 }
 
+void DBNoteController::execQuery(QSqlQuery& query)
+{
+    if (!query.exec()) {
+        auto msg = "Unable to execute query: " + query.lastError().text();
+        throw std::runtime_error(msg.toStdString());
+    }
+}
 
 bool DBNoteController::nameExists(const QString& title) const
 {
@@ -150,15 +161,6 @@ bool DBNoteController::nameExists(const QString& title) const
     execQuery(q);
 
     return q.last();
-}
-
-
-void DBNoteController::execQuery(QSqlQuery& query)
-{
-    if (!query.exec()) {
-        auto msg = "Unable to execute query: " + query.lastError().text();
-        throw std::runtime_error(msg.toStdString());
-    }
 }
 
 QVariant DBNoteController::queryField(NoteId id, const QString& name) const
@@ -185,4 +187,25 @@ void DBNoteController::onDbNotification(const QString& name)
     if (name == "notes") {
         emit updated();
     }
+}
+
+void DBNoteController::updateNote(NoteId id, const QString &name, const QString &contents, const QString &tags) {
+    QSqlQuery query(_db);
+    QString queryStr;
+
+    if (!nameExists(name)) { 
+        queryStr = QString("UPDATE notes SET name='%1', text='%2', tags='%3' WHERE id=%4")
+        .arg(name)
+        .arg(contents)
+        .arg(tags)
+        .arg(id);
+    } else { // Если новое имя уже сущестует в таблице то просто продолжаем не изменяя имя, можно мб сигнал какой то подавать чтоб в ГУИ это отобразить
+        queryStr = QString("UPDATE notes SET contents='%1', tags='%3' WHERE id=%4")
+        .arg(contents)
+        .arg(tags)
+        .arg(id);
+    }
+
+    prepareQuery(query, queryStr);
+    execQuery(query);
 }

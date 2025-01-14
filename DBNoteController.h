@@ -1,5 +1,5 @@
 #pragma once
-#include "notecontroller.h"
+#include "INoteController.h"
 #include <QSqlDatabase>
 
 
@@ -24,6 +24,8 @@ public:
     void setNoteTextFormat(NoteId id, Qt::TextFormat format) override;
     QString getNoteTags(NoteId id) const override;
     void setNoteTags(NoteId id, const QString& tags) override;
+    void updateNote(NoteId id, const QString &name, const QString &contents, const QString &tags) override;
+
     int64_t getNoteCreationTimestamp(NoteId id) const override;
     int64_t getNoteUpdateTimestamp(NoteId id) const override;
 

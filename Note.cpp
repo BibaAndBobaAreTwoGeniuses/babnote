@@ -1,4 +1,4 @@
-#include "note.h"
+#include "Note.h"
 
 Note::Note(QObject *parent)
     : QObject{parent}
@@ -22,9 +22,7 @@ void Note::setTags() {
 }
 
 void Note::saveNote() {
-    m_controller->setNoteName(m_noteId, m_name);
-    m_controller->setNoteText(m_noteId, m_contents);
-    m_controller->setNoteTags(m_noteId, m_tags);
+    m_controller->updateNote(m_noteId, m_name, m_contents, m_tags);
 }
 
 void Note::switchMode() {
