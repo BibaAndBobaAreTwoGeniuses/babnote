@@ -200,7 +200,7 @@ void DBNoteController::updateNote(NoteId id, const QString &name, const QString 
         .arg(tags)
         .arg(id);
     } else { // Если новое имя уже сущестует в таблице то просто продолжаем не изменяя имя, можно мб сигнал какой то подавать чтоб в ГУИ это отобразить
-        queryStr = QString("UPDATE notes SET contents='%1', tags='%3' WHERE id=%4")
+        queryStr = QString("UPDATE notes SET text='%1', tags='%3' WHERE id=%4")
         .arg(contents)
         .arg(tags)
         .arg(id);

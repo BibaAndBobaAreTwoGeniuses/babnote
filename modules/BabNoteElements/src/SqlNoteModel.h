@@ -2,12 +2,15 @@
 #define SQLNOTEMODEL_H
 
 #include <QSqlTableModel>
+#include <qqml.h>
+#include <qtmetamacros.h>
 
 class QSqlDatabase;
 
 class SqlNoteModel : public QSqlTableModel
 {
     Q_OBJECT
+    QML_ELEMENT
 public:
     explicit SqlNoteModel(QObject *parent = nullptr);
 

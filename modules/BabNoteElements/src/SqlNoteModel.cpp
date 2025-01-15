@@ -5,27 +5,7 @@
 SqlNoteModel::SqlNoteModel(QObject *parent)
     : QSqlTableModel{parent}
 {
-    db = QSqlDatabase::addDatabase("QSQLLITE");
-    db.setHostName("babatg");
-    db.setDatabaseName("babnote.sqlite");
-    db.setUserName("babatg");
-    db.setPassword("babatg");
-    db.open();
-
-    auto queryStr = QString("CREATE TABLE IF NOT EXISTS notes("
-                            "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                            "name TINYTEXT,"
-                            "text LONGTEXT,"
-                            "textFormat INTEGER,"
-                            "tags LONGTEXT,"
-                            "created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
-                            "updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
-                            ");");
-
-    QSqlQuery query(db);
-    query.prepare(queryStr);
-    query.exec();
-
+    // Подключение к бд нужно создать из вне
     setEditStrategy(QSqlTableModel::OnFieldChange);
     setTable("notes");
     generateRoles();
