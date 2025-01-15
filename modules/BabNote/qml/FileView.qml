@@ -2,6 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls
 import BabNote.Elements 1.0
 
+
+
 Item {
     id: root
     width: 200 // Default width for the FileView
@@ -18,22 +20,11 @@ Item {
         height: root.height
         spacing: 5
 
-        model: ListModel {
-            id: modelComponent
-            Component.onCompleted: {
-                console.log("reloading notes")
-                root.reloadNotes()
-                // noteId
-                // title
-            }
-        }
+        model: SqlNoteModel {}
 
         delegate: Item {
             id: noteItem
             width: root.width
-
-            required property string title
-            required property int noteId
 
             height: 50
 
@@ -44,7 +35,7 @@ Item {
 
                 Text {
                     anchors.fill: parent
-                    text: noteItem.title
+                    text: name
                     color: "white"
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
@@ -59,7 +50,7 @@ Item {
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
                     onClicked: mouse => {
                                    if (mouse.button == Qt.LeftButton) {
-                                       root.noteSelected(noteItem.noteId)
+                                       root.noteSelected(id)
                                    } else {
                                        contextMenu.open()
                                    }
@@ -68,7 +59,7 @@ Item {
                     FileViewMenu {
                         id: contextMenu
                         controller: root.controller
-                        noteId: noteItem.noteId
+                        noteId: id
                     }
                 }
             }
@@ -78,20 +69,20 @@ Item {
     Connections {
         target: controller
         function onUpdated() {
-            root.reloadNotes()
+            //root.reloadNotes()
         }
     }
-    function reloadNotes() {
-        fileList.model.clear()
-        console.log("reloading")
-        let notesVec = controller.getNotes()
-        for (const noteId of notesVec) {
-            let title = controller.getNoteName(noteId)
-            fileList.model.append({
-                                      "noteId": noteId,
-                                      "title": title
-                                  })
-        }
-        console.log("finished")
-    }
+    // function reloadNotes() {
+    //     fileList.model.clear()
+    //     console.log("reloading")
+    //     let notesVec = controller.getNotes()
+    //     for (const noteId of notesVec) {
+    //         let title = controller.getNoteName(noteId)
+    //         fileList.model.append({
+    //                                   "noteId": noteId,
+    //                                   "title": title
+    //                               })
+    //     }
+    //     console.log("finished")
+    // }
 }

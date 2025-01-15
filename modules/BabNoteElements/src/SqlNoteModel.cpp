@@ -1,18 +1,19 @@
 #include "SqlNoteModel.h"
 #include <QSqlDatabase>
 #include <QSqlQuery>
-
+#include <QSqlRecord>
 SqlNoteModel::SqlNoteModel(QObject *parent)
-    : QSqlTableModel{parent}
+    : QSqlTableModel{parent, makeDatabase()}
 {
     // Подключение к бд нужно создать из вне
     setEditStrategy(QSqlTableModel::OnFieldChange);
     setTable("notes");
     generateRoles();
     select();
+
 }
 
-QVariant SqlNoteModel::data(const QModelIndex &index, int role)
+QVariant SqlNoteModel::data(const QModelIndex &index, int role) const
 {
     QVariant value;
     if (role < Qt::UserRole) {
@@ -22,6 +23,7 @@ QVariant SqlNoteModel::data(const QModelIndex &index, int role)
         QModelIndex modelIndex = this->index(index.row(), columnIdx);
         value = QSqlQueryModel::data(modelIndex, Qt::DisplayRole);
     }
+
     return value;
 }
 
