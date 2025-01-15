@@ -1,53 +1,44 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(noteapp VERSION 0.1 LANGUAGES CXX)
+project(babnote VERSION 0.1 LANGUAGES CXX)
 
+set(CMAKE_AUTOMOC ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Sql)
+find_package(Qt6 6.5 COMPONENTS Quick REQUIRED)
 
 qt_standard_project_setup(REQUIRES 6.5)
 
-qt_add_executable(appnoteapp
+qt_policy(SET QTP0001 NEW)
+qt_policy(SET QTP0004 NEW)
+
+qt_add_executable(BabNoteApp
     main.cpp
 )
 
-qt_add_qml_module(appnoteapp
-    URI noteapp
-    VERSION 1.0
-    QML_FILES
-        Main.qml
-        SOURCES
-        SOURCES
-        QML_FILES
-        QML_FILES TextNote.qml
-        QML_FILES FileView.qml
-        SOURCES
-        SOURCES INoteController.h
-        SOURCES DBNoteController.h DBNoteController.cpp
-        QML_FILES FileViewMenu.qml
-        QML_FILES FileViewBar.qml
-        QML_FILES
-        SOURCES Note.h Note.cpp
-)
-
-# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
-# If you are developing for iOS or macOS you should consider setting an
-# explicit, fixed bundle identifier manually though.
-set_target_properties(appnoteapp PROPERTIES
-#    MACOSX_BUNDLE_GUI_IDENTIFIER com.example.appnoteapp
+set_target_properties(BabNoteApp PROPERTIES
+    MACOSX_BUNDLE_GUI_IDENTIFIER babnote
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
 )
 
-target_link_libraries(appnoteapp
-    PRIVATE Qt6::Quick Qt6::Sql
+target_compile_definitions(BabNoteApp
+    PRIVATE
+        $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>
+)
+target_link_libraries(BabNoteApp
+    PRIVATE
+        Qt6::Quick
+        BabNote
 )
 
+add_subdirectory(modules/BabNoteElements)
+add_subdirectory(modules/BabNote)
+
 include(GNUInstallDirs)
-install(TARGETS appnoteapp
+install(TARGETS BabNoteApp
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}

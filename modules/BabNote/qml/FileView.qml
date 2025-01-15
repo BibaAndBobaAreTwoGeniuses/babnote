@@ -1,5 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls
+import BabNote.Elements 1.0
+
 Item {
     id: root
     width: 200 // Default width for the FileView
@@ -7,11 +9,10 @@ Item {
 
     required property INoteController controller
 
+    signal noteSelected(int noteId)
 
-
-
-
-    ListView { // File view component
+    ListView {
+        // File view component
         id: fileList
         width: root.width
         height: root.height
@@ -20,8 +21,8 @@ Item {
         model: ListModel {
             id: modelComponent
             Component.onCompleted: {
-                console.log("reloading notes");
-                root.reloadNotes();
+                console.log("reloading notes")
+                root.reloadNotes()
                 // noteId
                 // title
             }
@@ -56,16 +57,13 @@ Item {
                     id: mouseArea
                     anchors.fill: parent
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
-                    onClicked: (mouse) => {
-                        if (mouse.button == Qt.LeftButton) {
-                            stack.pop()
-                            let comp = Qt.createComponent("TextNote.qml")
-                            let obj = comp.createObject(stack, {controller: root.controller, noteId: noteItem.noteId, name: noteItem.title, contents: controller.getNoteText(noteId), type: "markdown"})
-                            stack.push(obj)
-                        } else {
-                            contextMenu.open()
-                        }
-                    }
+                    onClicked: mouse => {
+                                   if (mouse.button == Qt.LeftButton) {
+                                       root.noteSelected(noteItem.noteId)
+                                   } else {
+                                       contextMenu.open()
+                                   }
+                               }
 
                     FileViewMenu {
                         id: contextMenu
@@ -73,13 +71,9 @@ Item {
                         noteId: noteItem.noteId
                     }
                 }
-
-
             }
         }
-
     }
-
 
     Connections {
         target: controller
@@ -93,15 +87,11 @@ Item {
         let notesVec = controller.getNotes()
         for (const noteId of notesVec) {
             let title = controller.getNoteName(noteId)
-            fileList.model.append({noteId: noteId, title: title})
+            fileList.model.append({
+                                      "noteId": noteId,
+                                      "title": title
+                                  })
         }
         console.log("finished")
     }
-
-
-
-
-
-
-
 }

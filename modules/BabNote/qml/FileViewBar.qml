@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import BabNote.Elements 1.0
 
 Item {
     id: root
@@ -18,7 +19,6 @@ Item {
                 color: "#222222"
                 radius: 3
                 border.color: "#222222"
-
             }
 
             text: "Create"

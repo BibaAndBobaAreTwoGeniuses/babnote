@@ -1,7 +1,8 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import noteapp
+import BabNote 1.0
+import BabNote.Elements 1.0
 
 Window {
     id: root
@@ -20,9 +21,6 @@ Window {
     //     type: "markdown"
     //     controller: root.controller
     // }
-
-
-
     SplitView {
         anchors.fill: parent
         spacing: 100
@@ -39,7 +37,6 @@ Window {
                 }
             }
         }
-
 
         ColumnLayout {
             id: fileViewLayout
@@ -59,11 +56,11 @@ Window {
             FileView {
                 id: fileExplorer
                 controller: root.controller
+                onNoteSelected: noteId => stack.noteId = noteId
                 Layout.fillWidth: true
                 Layout.fillHeight: true
             }
         }
-
 
         ColumnLayout {
 
@@ -86,30 +83,50 @@ Window {
                     radius: 5
                 }
 
-                StackView {
+
+                /*TextNote {
                     id: stack
+                    controller: root.controller
                     anchors.fill: parent
                     anchors.topMargin: 20
                     anchors.leftMargin: 20
+                }*/
+                StackView {
+                    id: stack
+                    property int noteId
+                    anchors.fill: parent
+                    anchors.topMargin: 20
+                    anchors.leftMargin: 20
+                    clip: true
 
-                    pushEnter: null
-                    pushExit: null
-                    popEnter: null
-                    popExit: null
+                    onNoteIdChanged: {
+                        stack.pop()
+                        let comp = Qt.createComponent("TextNote.qml")
+                        let obj = comp.createObject(stack, {
+                                                        "controller": root.controller,
+                                                        "noteId": noteId,
+                                                        "name": controller.getNoteName(
+                                                                    noteId),
+                                                        "contents": controller.getNoteText(
+                                                                        noteId),
+                                                        "type": "markdown"
+                                                    })
+                        stack.push(obj)
+                    }
                 }
             }
         }
     }
 
-
     Item {
         width: parent.width
         height: parent.height
         focus: true
-        
+
         Keys.onPressed: {
-            if (event.key === Qt.Key_N && event.modifiers & Qt.ControlModifier) {
-                createNote();
+            if (event.key === Qt.Key_N
+                    && event.modifiers & Qt.ControlModifier) {
+                createNote()
             }
         }
         function createNote() {

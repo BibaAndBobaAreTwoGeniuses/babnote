@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import BabNote.Elements 1.0
 
 Item {
     id: root
@@ -17,7 +18,7 @@ Item {
             implicitWidth: 200 // Set here the width you want
             color: "#2f2e2e"
             radius: 10
-            border.width: 100;
+            border.width: 100
             border.color: "#2f2e2e"
         }
 

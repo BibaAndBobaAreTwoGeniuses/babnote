@@ -5,7 +5,7 @@
 #include <QQmlEngine>
 #include <cstdint>
 #include <qtmetamacros.h>
-#
+
 using NoteId = int;
 
 class INoteController;
