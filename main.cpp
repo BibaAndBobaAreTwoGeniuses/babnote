@@ -1,6 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-
+#include "modules/BabNoteElements/src/SqlNoteModel.h"
+#include <QQmlContext>
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
@@ -10,9 +11,15 @@ int main(int argc, char *argv[])
 
     qputenv("QT_QUICK_CONTROLS_MATERIAL_VARIANT", "Dense");
 
+    SqlNoteModel model;
+
+
     QQmlApplicationEngine engine;
+    engine.rootContext()->setContextProperty("modelNote", &model);
     engine.addImportPath("qrc:/");
     engine.loadFromModule("BabNote", "Main");
+
+
 
     return app.exec();
 }
