@@ -15,7 +15,7 @@ public:
     explicit SqlNoteModel(QObject *parent = nullptr);
 
     Q_INVOKABLE QVariant data(const QModelIndex &index, int role = Qt::DisplayRole);
-    QHash<int, QByteArray> getRoles() const { return roles; }
+    QHash<int, QByteArray> roleNames() const override { return roles; }
 
 private:
     QHash<int, QByteArray> roles;
