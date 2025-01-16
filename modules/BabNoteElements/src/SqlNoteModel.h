@@ -9,7 +9,7 @@
 class QSqlDatabase;
 
 
-static inline QSqlDatabase makeDatabase()
+static QSqlDatabase makeDatabase()
 {
     auto db = QSqlDatabase::addDatabase("QSQLITE");
     db.setHostName("babatg");
