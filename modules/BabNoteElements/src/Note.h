@@ -12,6 +12,7 @@ using NoteId = int;
 
 class Note : public QObject
 {
+public:
     Q_OBJECT
     QML_ELEMENT
     Q_PROPERTY(SqlNoteModel* noteModel MEMBER m_controller REQUIRED)

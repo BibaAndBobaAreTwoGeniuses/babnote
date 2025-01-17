@@ -46,7 +46,7 @@ static QSqlDatabase makeDatabase()
 }
 
 
-class SqlNoteModel : QSqlTableModel
+class SqlNoteModel : public QSqlTableModel
 {
     Q_OBJECT
 public:
