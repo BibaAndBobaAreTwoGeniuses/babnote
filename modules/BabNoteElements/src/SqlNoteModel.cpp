@@ -5,15 +5,15 @@
 #include <qlogging.h>
 #include <qnamespace.h>
 #include <quuid.h>
-SqlNoteModel::SqlNoteModel(QObject *parent)
-    : QSqlTableModel{parent, makeDatabase()}
+
+
+SqlNoteModel::SqlNoteModel(QObject *parent) : QSqlTableModel{parent, makeDatabase()}
 {
     // Подключение к бд нужно создать из вне
     setEditStrategy(QSqlTableModel::OnFieldChange);
     setTable("notes");
     generateRoles();
     select();
-
 }
 
 QVariant SqlNoteModel::data(const QModelIndex &index, int role /* = Qt::UserRole */) const
@@ -154,6 +154,7 @@ void SqlNoteModel::setNoteTags(NoteId id, const QString& tags) {
 }
 
 void SqlNoteModel::updateNote(NoteId id, const QString &name, const QString &contents, const QString &tags) {
+    qDebug() << "updatign note model";
     auto startModel = index(0, fieldIndex("id"));
     if (auto modelList = match(startModel, Qt::EditRole, id); modelList.size() != 0) {
         auto row = modelList[0].row();

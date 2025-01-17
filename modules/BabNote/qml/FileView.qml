@@ -9,7 +9,7 @@ Item {
     width: 200 // Default width for the FileView
     height: parent.height // Default height for the FileView
 
-    required property INoteController controller
+    required property SqlNoteModel noteModel
 
     signal noteSelected(int noteId)
 
@@ -20,7 +20,7 @@ Item {
         height: root.height
         spacing: 5
 
-        model: SqlNoteModel {}
+        model: root.noteModel
 
         delegate: Item {
             id: noteItem
@@ -58,7 +58,7 @@ Item {
 
                     FileViewMenu {
                         id: contextMenu
-                        controller: root.controller
+                        noteModel: root.noteModel
                         noteId: id
                     }
                 }
@@ -67,7 +67,7 @@ Item {
     }
 
     Connections {
-        target: controller
+        target: root.noteModel
         function onUpdated() {
             //root.reloadNotes()
         }

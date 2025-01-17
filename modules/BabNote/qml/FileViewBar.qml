@@ -5,7 +5,7 @@ import BabNote.Elements 1.0
 
 Item {
     id: root
-    required property INoteController controller
+    required property SqlNoteModel noteModel
 
     RowLayout {
         Layout.minimumWidth: 50
@@ -23,7 +23,7 @@ Item {
 
             text: "Create"
             onClicked: {
-                root.controller.createNote()
+                root.noteModel.createNote()
             }
         }
         Button {

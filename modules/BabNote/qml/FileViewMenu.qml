@@ -5,7 +5,7 @@ import BabNote.Elements 1.0
 Item {
     id: root
     required property int noteId
-    required property INoteController controller
+    required property SqlNoteModel noteModel
     function open() {
         contextMenu.open()
     }
@@ -29,7 +29,7 @@ Item {
             }
             text: "Delete"
             onClicked: {
-                root.controller.removeNote(root.noteId)
+                root.noteModel.removeNote(root.noteId)
                 stack.pop()
             }
         }

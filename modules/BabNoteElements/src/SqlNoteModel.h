@@ -1,12 +1,12 @@
 #ifndef SQLNOTEMODEL_H
 #define SQLNOTEMODEL_H
 
-#include <QSqlTableModel>
+#include "NoteModel.h"
 #include <qqml.h>
 #include <qtmetamacros.h>
 #include <QSqlQuery>
 #include <QSqlError>
-class QSqlDatabase;
+#include <QSqlDatabase>
 
 using NoteId = int;
 
@@ -45,12 +45,14 @@ static QSqlDatabase makeDatabase()
     return db;
 }
 
-class SqlNoteModel : public QSqlTableModel
+
+class SqlNoteModel : QSqlTableModel
 {
     Q_OBJECT
-    QML_ELEMENT
 public:
+    QML_ELEMENT
     explicit SqlNoteModel(QObject *parent = nullptr);
+
 
 
     // Overriden necessary functions
@@ -59,17 +61,17 @@ public:
     QHash<int, QByteArray> roleNames() const override { return roles; }
 
     // Has-to-do with notes functions
-    NoteId createNote();
-    void removeNote(NoteId noteId);
-    QString getNoteName(NoteId noteId) const;
-    void setNoteName(NoteId noteId, const QString& name);
-    QString getNoteText(NoteId noteId) const;
-    void setNoteText(NoteId id, const QString& text);
-    Qt::TextFormat getNoteTextFormat(NoteId id) const;
-    void setNoteTextFormat(NoteId id, Qt::TextFormat format);
-    QString getNoteTags(NoteId id) const;
-    void setNoteTags(NoteId id, const QString& tags);
-    void updateNote(NoteId id, const QString &name, const QString &contents, const QString &tags);
+    Q_INVOKABLE NoteId createNote();
+    Q_INVOKABLE void removeNote(NoteId noteId);
+    Q_INVOKABLE QString getNoteName(NoteId noteId) const;
+    Q_INVOKABLE void setNoteName(NoteId noteId, const QString& name);
+    Q_INVOKABLE QString getNoteText(NoteId noteId) const;
+    Q_INVOKABLE void setNoteText(NoteId id, const QString& text);
+    Q_INVOKABLE Qt::TextFormat getNoteTextFormat(NoteId id) const;
+    Q_INVOKABLE void setNoteTextFormat(NoteId id, Qt::TextFormat format);
+    Q_INVOKABLE QString getNoteTags(NoteId id) const;
+    Q_INVOKABLE void setNoteTags(NoteId id, const QString& tags);
+    Q_INVOKABLE void updateNote(NoteId id, const QString &name, const QString &contents, const QString &tags);
 
     int64_t getNoteCreationTimestamp(NoteId id) const;
     int64_t getNoteUpdateTimestamp(NoteId id) const;

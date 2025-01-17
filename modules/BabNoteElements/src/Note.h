@@ -5,16 +5,16 @@
 #include <QQmlEngine>
 #include <cstdint>
 #include <qtmetamacros.h>
-
+#include <SqlNoteModel.h>
 using NoteId = int;
 
-class INoteController;
+
 
 class Note : public QObject
 {
     Q_OBJECT
     QML_ELEMENT
-    Q_PROPERTY(INoteController* controller MEMBER m_controller REQUIRED)
+    Q_PROPERTY(SqlNoteModel* noteModel MEMBER m_controller REQUIRED)
     Q_PROPERTY(NoteId noteId MEMBER m_noteId REQUIRED) // Неизменяемая типа, айди постоянный, хз можно ли сделать ее REQUIRED с READ только
 
     Q_PROPERTY(QString name MEMBER m_name NOTIFY nameChanged REQUIRED)
@@ -28,7 +28,7 @@ class Note : public QObject
 
 
 
-    INoteController* m_controller;
+    SqlNoteModel* m_noteModel;
     NoteId m_noteId;
     QString m_name;
 

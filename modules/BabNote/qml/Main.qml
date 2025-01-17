@@ -12,15 +12,9 @@ Window {
     color: "#111111"
     title: qsTr("Hello World")
 
-    property INoteController controller: DBNoteController {}
+    property SqlNoteModel noteModel: SqlNoteModel {}
 
-    // Note {
-    //     id: testNode
-    //     noteId: 10
-    //     name: "Unttiled"
-    //     type: "markdown"
-    //     controller: root.controller
-    // }
+ 
     SplitView {
         anchors.fill: parent
         spacing: 100
@@ -48,14 +42,14 @@ Window {
             Layout.topMargin: 5
 
             FileViewBar {
-                controller: root.controller
+                noteModel: root.noteModel
                 Layout.minimumHeight: 20
                 Layout.fillWidth: true
             }
 
             FileView {
                 id: fileExplorer
-                controller: root.controller
+                noteModel: root.noteModel
                 onNoteSelected: noteId => stack.noteId = noteId
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -86,7 +80,7 @@ Window {
 
                 /*TextNote {
                     id: stack
-                    controller: root.controller
+                    noteModel: root.noteModel
                     anchors.fill: parent
                     anchors.topMargin: 20
                     anchors.leftMargin: 20
@@ -103,11 +97,11 @@ Window {
                         stack.pop()
                         let comp = Qt.createComponent("TextNote.qml")
                         let obj = comp.createObject(stack, {
-                                                        "controller": root.controller,
+                                                        "noteModel": root.noteModel,
                                                         "noteId": noteId,
-                                                        "name": controller.getNoteName(
+                                                        "name": root.noteModel.getNoteName(
                                                                     noteId),
-                                                        "contents": controller.getNoteText(
+                                                        "contents": noteModel.getNoteText(
                                                                         noteId),
                                                         "type": "markdown"
                                                     })
@@ -130,7 +124,7 @@ Window {
             }
         }
         function createNote() {
-            let noteId = root.controller.createNote()
+            let noteId = root.noteModel.createNote()
             console.log("created " + noteId.toString())
         }
     }

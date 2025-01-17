@@ -6,7 +6,7 @@ import BabNote.Elements 1.0
 Item {
     id: root
 
-    property INoteController controller
+    property SqlNoteModel noteModel
     property int noteId
     property string name
     property string type
@@ -17,7 +17,7 @@ Item {
 
         Note {
             id: note
-            controller: root.controller
+            noteModel: root.noteModel
             noteId: root.noteId
             name: root.name
             contents: root.contents
