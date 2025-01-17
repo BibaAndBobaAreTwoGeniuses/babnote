@@ -60,12 +60,11 @@ QVector<NoteId> DBNoteController::getNotes() const
 
 NoteId DBNoteController::createNote()
 {
-    auto queryStr = QString("INSERT INTO notes(updated, text) VALUES(CURRENT_TIMESTAMP, \"some text\");");
+    auto queryStr = QString("INSERT INTO notes(text) VALUES(\"some text\");");
     QSqlQuery q(_db);
     prepareQuery(q, queryStr);
     execQuery(q);
-
-// FIX: если название заметки заранее сделать Untitled + id будущей заметки то она не создастся
+    
     auto lastInsertId = q.lastInsertId().toLongLong();
     setNoteName(lastInsertId, "Untitled " + QString::number(lastInsertId));
     return lastInsertId;

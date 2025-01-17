@@ -8,6 +8,7 @@
 #include <QSqlError>
 class QSqlDatabase;
 
+using NoteId = int;
 
 static QSqlDatabase makeDatabase()
 {
@@ -51,11 +52,34 @@ class SqlNoteModel : public QSqlTableModel
 public:
     explicit SqlNoteModel(QObject *parent = nullptr);
 
-    Q_INVOKABLE QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+
+    // Overriden necessary functions
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
     QHash<int, QByteArray> roleNames() const override { return roles; }
+
+    // Has-to-do with notes functions
+    NoteId createNote();
+    void removeNote(NoteId noteId);
+    QString getNoteName(NoteId noteId) const;
+    void setNoteName(NoteId noteId, const QString& name);
+    QString getNoteText(NoteId noteId) const;
+    void setNoteText(NoteId id, const QString& text);
+    Qt::TextFormat getNoteTextFormat(NoteId id) const;
+    void setNoteTextFormat(NoteId id, Qt::TextFormat format);
+    QString getNoteTags(NoteId id) const;
+    void setNoteTags(NoteId id, const QString& tags);
+    void updateNote(NoteId id, const QString &name, const QString &contents, const QString &tags);
+
+    int64_t getNoteCreationTimestamp(NoteId id) const;
+    int64_t getNoteUpdateTimestamp(NoteId id) const;
 private:
     void generateRoles();
 
+    QVariant getFieldValue(NoteId noteId, const QString &fieldName) const;
+    void setFieldValue(NoteId noteId, const QString &fieldName, const QVariant &fieldValue);
+    bool nameExists(const QString& title) const;
+    
     QHash<int, QByteArray> roles;
     QSqlDatabase db;
 signals:

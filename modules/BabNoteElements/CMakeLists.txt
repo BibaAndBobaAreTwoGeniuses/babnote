@@ -15,6 +15,8 @@ qt_add_qml_module(BabNoteElements
         src/Note.cpp
         src/SqlNoteModel.h
         src/SqlNoteModel.cpp
+        src/NoteModel.h
+        src/NoteModel.cpp
 )
 target_link_libraries(BabNoteElements
     PUBLIC

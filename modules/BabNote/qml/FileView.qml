@@ -72,17 +72,5 @@ Item {
             //root.reloadNotes()
         }
     }
-    // function reloadNotes() {
-    //     fileList.model.clear()
-    //     console.log("reloading")
-    //     let notesVec = controller.getNotes()
-    //     for (const noteId of notesVec) {
-    //         let title = controller.getNoteName(noteId)
-    //         fileList.model.append({
-    //                                   "noteId": noteId,
-    //                                   "title": title
-    //                               })
-    //     }
-    //     console.log("finished")
-    // }
+  
 }

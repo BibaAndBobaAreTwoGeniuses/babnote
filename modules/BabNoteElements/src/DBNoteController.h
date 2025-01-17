@@ -20,6 +20,7 @@ public:
     void setNoteName(NoteId id, const QString& name) override;
     QString getNoteText(NoteId id) const override;
     void setNoteText(NoteId id, const QString& text) override;
+    // Stopped here
     Qt::TextFormat getNoteTextFormat(NoteId id) const override;
     void setNoteTextFormat(NoteId id, Qt::TextFormat format) override;
     QString getNoteTags(NoteId id) const override;
