@@ -79,13 +79,16 @@ NoteId SqlNoteModel::createNote() {
     auto record = this->record();
     record.remove(0); // remove id from the record so it isn't fucked
     record.setValue(record.indexOf("text"), "some text");
-    record.setValue(record.indexOf("name"), "Untitled " + this->record(this->rowCount() - 1).value("id").toString()); // Some scary shit (not very effecient???)
 
     if (!insertRecord(-1, record)) {
         qDebug() << "Could not insert a row";
     }
     select();
-    return this->query().lastInsertId().toInt();
+    auto insertId = this->query().lastInsertId().toInt();
+
+    setNoteName(insertId, "Untitled " + this->record(this->rowCount() - 1).value("id").toString());
+
+    return insertId;
 }
 
 void SqlNoteModel::removeNote(NoteId noteId) {
@@ -101,6 +104,7 @@ QString SqlNoteModel::getNoteName(NoteId noteId) const {
     if (field.isNull()) {
         qDebug() << "Could not get name";
     }
+
     return field.toString();
 }
 
@@ -108,8 +112,10 @@ void SqlNoteModel::setNoteName(NoteId noteId, const QString& name) {
     auto oldName = getNoteName(noteId);
 
     if ((oldName != name || oldName.isEmpty()) && !nameExists(name))  {
+        qDebug() << "not ecists";
         setFieldValue(noteId, "name", name);
     } else {
+        qDebug() << "here";
         setFieldValue(noteId, "name", QUuid::createUuid().toString(QUuid::WithoutBraces).chopped(10));
     }
 }

@@ -65,7 +65,7 @@ NoteId DBNoteController::createNote()
     prepareQuery(q, queryStr);
     execQuery(q);
     
-    auto lastInsertId = q.lastInsertId().toLongLong();
+    auto lastInsertId = q.lastInsertId().toLongLong() - 1;
     setNoteName(lastInsertId, "Untitled " + QString::number(lastInsertId));
     return lastInsertId;
 }
