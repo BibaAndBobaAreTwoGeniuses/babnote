@@ -29,7 +29,7 @@ public:
 
 
 
-    SqlNoteModel* m_noteModel;
+    SqlNoteModel* m_noteModel{nullptr};
     NoteId m_noteId;
     QString m_name;
 
@@ -42,6 +42,7 @@ public:
 
 public:
     explicit Note(QObject *parent = nullptr);
+    ~Note();
 
     Q_INVOKABLE void saveName();
     Q_INVOKABLE void saveContents();

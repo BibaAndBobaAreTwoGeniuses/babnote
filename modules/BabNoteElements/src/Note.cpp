@@ -6,6 +6,11 @@ Note::Note(QObject *parent)
 {
 }
 
+Note::~Note()
+{
+    delete m_noteModel;
+}
+
 void Note::saveName() {
     m_noteModel->setNoteName(m_noteId, m_name);
 }
