@@ -15,7 +15,7 @@ class Note : public QObject
 public:
     Q_OBJECT
     QML_ELEMENT
-    Q_PROPERTY(SqlNoteModel* noteModel MEMBER m_controller REQUIRED)
+    Q_PROPERTY(SqlNoteModel* noteModel MEMBER m_noteModel REQUIRED)
     Q_PROPERTY(NoteId noteId MEMBER m_noteId REQUIRED) // Неизменяемая типа, айди постоянный, хз можно ли сделать ее REQUIRED с READ только
 
     Q_PROPERTY(QString name MEMBER m_name NOTIFY nameChanged REQUIRED)
@@ -50,6 +50,8 @@ public:
     Q_INVOKABLE void setTags();
     Q_INVOKABLE void saveNote();
     Q_INVOKABLE void switchMode();
+
+
     
 public slots:
     int64_t getNoteCreationTimestamp() const;

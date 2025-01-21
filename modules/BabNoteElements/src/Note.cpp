@@ -1,6 +1,8 @@
 #include "Note.h"
 #include "SqlNoteModel.h"
 
+
+
 Note::Note(QObject *parent)
     : QObject{parent}
 {
@@ -8,7 +10,6 @@ Note::Note(QObject *parent)
 
 Note::~Note()
 {
-    delete m_noteModel;
 }
 
 void Note::saveName() {
@@ -40,6 +41,7 @@ void Note::switchMode() {
     }
     emit textFormatChanged();
 }
+
 
 int64_t Note::getNoteCreationTimestamp() const {
     return m_noteModel->getNoteCreationTimestamp(m_noteId);

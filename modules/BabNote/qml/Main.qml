@@ -31,6 +31,20 @@ Window {
                 }
             }
         }
+        Shortcut {
+            sequence: "Ctrl+O"
+            onActivated: {
+                console.log("sending...");
+                networkController.saveDB()
+            }
+        }
+        Shortcut {
+            sequence: "Ctrl+P"
+            onActivated: {
+                networkController.loadDB() // have to restart to update database visually
+
+            }
+        }
 
         ColumnLayout {
             id: fileViewLayout

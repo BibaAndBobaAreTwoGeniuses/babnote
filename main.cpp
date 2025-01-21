@@ -1,8 +1,8 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-#include <QSqlDatabase>
-#include "modules/BabNoteElements/src/SqlNoteModel.h"
+#include "modules/BabNoteElements/src/NetworkController.h".h"
+
 
 int main(int argc, char *argv[])
 {
@@ -15,7 +15,13 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
+
+
     engine.addImportPath("qrc:/");
+
+    NetworkController networkController;
+    engine.rootContext()->setContextProperty("networkController", &networkController);
+
     engine.loadFromModule("BabNote", "Main");
 
 

@@ -1,5 +1,5 @@
 find_package(Qt6 6.5 COMPONENTS Quick Sql REQUIRED)
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Sql)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Sql Network)
 
 
 include_directories(src)
@@ -15,6 +15,8 @@ qt_add_qml_module(BabNoteElements
         src/Note.cpp
         src/SqlNoteModel.h
         src/SqlNoteModel.cpp
+        src/NetworkController.h
+        src/NetworkController.cpp
 
 
 
@@ -24,4 +26,5 @@ target_link_libraries(BabNoteElements
     PUBLIC
         Qt6::Quick
         Qt6::Sql
+        Qt6::Network
 )

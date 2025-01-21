@@ -9,7 +9,6 @@
 
 SqlNoteModel::SqlNoteModel(QObject *parent) : QSqlTableModel{parent, makeDatabase()}
 {
-    // Подключение к бд нужно создать из вне
     setEditStrategy(QSqlTableModel::OnFieldChange);
     setTable("notes");
     generateRoles();
